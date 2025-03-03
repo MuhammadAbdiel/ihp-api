@@ -80,4 +80,23 @@ router.post("/logout", authenticate, async (req, res) => {
   }
 });
 
+router.get("/profile", authenticate, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    res.json({ message: "Profil ditemukan", user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

@@ -1,6 +1,7 @@
 require("dotenv").config(); // Load environment variables
 
 const express = require("express");
+const cors = require("cors"); // Tambahkan CORS
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -17,6 +18,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+// Konfigurasi CORS
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "*", // Bisa disesuaikan dengan domain frontend
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Mengizinkan pengiriman cookie dengan request
+};
+app.use(cors(corsOptions));
 
 // Routes dengan prefix "/api" untuk konsistensi
 app.use("/api/auth", authRoutes);

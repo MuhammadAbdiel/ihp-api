@@ -5,6 +5,7 @@ const {
   comparePassword,
   generateToken,
 } = require("../utils/auth");
+const authenticate = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -50,7 +51,30 @@ router.post("/login", async (req, res) => {
     // Generate token
     const token = generateToken(user);
 
+    // Simpan token di database
+    await prisma.user.update({
+      where: { email },
+      data: { token },
+    });
+
     res.json({ message: "Login berhasil", token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Logout
+router.post("/logout", authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id; // Dapatkan user dari middleware autentikasi
+
+    // Hapus token dari database
+    await prisma.user.update({
+      where: { id: userId },
+      data: { token: null },
+    });
+
+    res.json({ message: "Logout berhasil" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

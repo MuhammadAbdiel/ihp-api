@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+var app = require("../app");
+var debug = require("debug")("ihp-backend:server");
+var http = require("http");
+var { PrismaClient } = require("@prisma/client");
+
+var prisma = new PrismaClient();
+var server;
+
+/**
+ * Get port from environment and store in Express.
+ */
+var port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
+
+/**
+ * Cek koneksi ke database sebelum menjalankan server
+ */
+async function startServer() {
+  try {
+    await prisma.$connect();
+    console.log("✅ Database connected successfully");
+
+    /**
+     * Create HTTP server.
+     */
+    server = http.createServer(app);
+
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+  } catch (error) {
+    console.error("❌ Database connection failed:", error);
+    process.exit(1); // Keluar jika gagal connect ke database
+  }
+}
+
+startServer(); // Jalankan fungsi startServer
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+function onError(error) {
+  if (error.syscall !== "listen") {
+    throw error;
+  }
+
+  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
+      process.exit(1);
+      break;
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+function onListening() {
+  var addr = server.address(); // Sekarang server sudah tersedia
+  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  debug("Listening on " + bind);
+  console.log(`🚀 Server running on http://localhost:${port}`);
+}

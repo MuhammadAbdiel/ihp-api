@@ -13,15 +13,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model User {
   id                Int      @id @default(autoincrement())
   fullName          String
   email             String   @unique
   password          String
-  role              String   @default("user")
+  role              Role     @default(USER)
   token             String?  @db.Text
   isVerified        Boolean  @default(false)
   verificationToken String?  @db.Text
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+
+  kafasId    Int?
+  kafas      Kafas?       @relation(fields: [kafasId], references: [id])
+  KafasUsage KafasUsage[]
+}
+
+model Kafas {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  quota     Int      @default(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users      User[]
+  KafasUsage KafasUsage[]
+}
+
+model KafasUsage {
+  id        Int      @id @default(autoincrement())
+  kafasId   Int
+  kafas     Kafas    @relation(fields: [kafasId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

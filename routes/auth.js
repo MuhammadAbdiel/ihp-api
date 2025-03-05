@@ -7,7 +7,7 @@ const {
   comparePassword,
   generateToken,
 } = require("../utils/auth");
-const authenticate = require("../middleware/authMiddleware");
+const { authenticate } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 

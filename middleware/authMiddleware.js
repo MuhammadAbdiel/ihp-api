@@ -28,4 +28,13 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-module.exports = authenticate;
+const adminMiddleware = async (req, res, next) => {
+  await authenticate(req, res, async () => {
+    if (req.user.role !== "ADMIN")
+      return res.status(403).json({ error: "Hanya admin yang diperbolehkan" });
+
+    next();
+  });
+};
+
+module.exports = { authenticate, adminMiddleware };

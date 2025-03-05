@@ -9,7 +9,7 @@ const logger = require("morgan");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const authRoutes = require("./routes/auth");
-
+const kafasRoutes = require("./routes/kafas");
 const app = express();
 
 // Middleware
@@ -30,6 +30,7 @@ app.use(cors(corsOptions));
 // Routes dengan prefix "/api" untuk konsistensi
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRouter);
+app.use("/api/kafas", kafasRoutes);
 app.use("/", indexRouter);
 
 // Middleware untuk menangani route yang tidak ditemukan

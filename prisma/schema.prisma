@@ -14,12 +14,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  fullName  String
-  email     String   @unique
-  password  String
-  role      String   @default("user")
-  token     String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                Int      @id @default(autoincrement())
+  fullName          String
+  email             String   @unique
+  password          String
+  role              String   @default("user")
+  token             String?  @db.Text
+  isVerified        Boolean  @default(false)
+  verificationToken String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }

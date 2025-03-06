@@ -90,7 +90,7 @@ router.get("/:id", authenticate, async (req, res) => {
     const { id } = req.params;
     const kafas = await prisma.kafas.findUnique({
       where: { id: parseInt(id) },
-      include: { KafasUsage: true },
+      include: { KafasUsage: true, users: true },
     });
 
     if (!kafas) return res.status(404).json({ error: "Kafas tidak ditemukan" });

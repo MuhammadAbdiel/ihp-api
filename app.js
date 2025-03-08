@@ -21,11 +21,16 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Konfigurasi CORS
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "*", // Bisa disesuaikan dengan domain frontend
+  origin: process.env.CLIENT_URL || "http://localhost:5173", // Sesuaikan dengan URL frontend
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Mengizinkan pengiriman cookie dengan request
+  allowedHeaders: "Content-Type,Authorization",
+  credentials: true,
 };
+
 app.use(cors(corsOptions));
+
+// Tangani preflight request
+app.options("*", cors(corsOptions));
 
 // Routes dengan prefix "/api" untuk konsistensi
 app.use("/api/auth", authRoutes);

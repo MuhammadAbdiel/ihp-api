@@ -6,7 +6,11 @@ const { authenticate } = require("../middleware/authMiddleware");
 // Get all users
 router.get("/", authenticate, async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      where: {
+        role: "USER",
+      },
+    });
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });

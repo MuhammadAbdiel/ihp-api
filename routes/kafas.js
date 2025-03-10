@@ -110,7 +110,7 @@ router.get("/", authenticate, async (req, res) => {
       quota: kafas.quota,
       used: kafas.KafasUsage.length,
       remaining: kafas.quota - kafas.KafasUsage.length,
-      kafasUsage: kafas.KafasUsage.map((usage) => ({
+      KafasUsage: kafas.KafasUsage.map((usage) => ({
         id: usage.id,
         userId: usage.userId,
         createdAt: usage.createdAt,

@@ -118,7 +118,7 @@ router.get("/", authenticate, async (req, res) => {
       })),
       users: kafas.users.map((user) => ({
         id: user.id,
-        name: user.name,
+        fullName: user.fullName,
         email: user.email,
         role: user.role,
       })),

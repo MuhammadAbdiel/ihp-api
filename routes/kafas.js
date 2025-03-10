@@ -101,7 +101,7 @@ router.delete("/assign/:id", adminMiddleware, async (req, res) => {
 router.get("/", authenticate, async (req, res) => {
   try {
     const kafasList = await prisma.kafas.findMany({
-      include: { KafasUsage: true },
+      include: { KafasUsage: true, users: true },
     });
 
     const result = kafasList.map((kafas) => ({
@@ -110,9 +110,39 @@ router.get("/", authenticate, async (req, res) => {
       quota: kafas.quota,
       used: kafas.KafasUsage.length,
       remaining: kafas.quota - kafas.KafasUsage.length,
+      kafasUsage: kafas.KafasUsage.map((usage) => ({
+        id: usage.id,
+        userId: usage.userId,
+        createdAt: usage.createdAt,
+        updatedAt: usage.updatedAt,
+      })),
+      users: kafas.users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      })),
+      createdAt: kafas.createdAt,
+      updatedAt: kafas.updatedAt,
     }));
 
     res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/user/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const kafas = await prisma.kafas.findMany({
+      where: {
+        users: { some: { id: parseInt(id) } },
+      },
+      include: { KafasUsage: true, users: true },
+    });
+
+    res.json(kafas);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
